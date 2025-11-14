@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:manga/screens/discoverscreen.dart';
+import 'package:manga/screens/favorites_screen.dart';
 import 'package:manga/screens/homescreen.dart';
+import 'package:manga/screens/profile_screen.dart';
 
 class MainNav extends StatefulWidget {
   const MainNav({super.key});
@@ -15,8 +17,8 @@ class _MainNavState extends State<MainNav> {
   final screens = const [
     HomeScreen(),
     DiscoverScreen(),
-    // FavoritesScreen(),
-    // ProfileScreen(),
+    FavoritesScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -32,8 +34,11 @@ class _MainNavState extends State<MainNav> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
 
-        selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: TextStyle(fontSize: 12),
+        selectedLabelStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: const TextStyle(fontSize: 12),
 
         items: const [
           BottomNavigationBarItem(
