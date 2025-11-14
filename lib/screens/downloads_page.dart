@@ -27,18 +27,41 @@ class _DownloadsPageState extends State<DownloadsPage> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final list = prefs.getStringList("downloads") ?? [];
 
-      downloads = list.map((e) => jsonDecode(e) as Map<String, dynamic>).where((
-        item,
-      ) {
+      final storyList = prefs.getStringList("downloads") ?? [];
+      final episodeList = prefs.getStringList("episode_downloads") ?? [];
+
+      // Decode all downloads
+      final storyDownloads = storyList
+          .map((e) => jsonDecode(e) as Map<String, dynamic>)
+          .toList();
+
+      final episodeDownloadsData = episodeList
+          .map((e) => jsonDecode(e) as Map<String, dynamic>)
+          .toList();
+
+      // Combine both
+      final combined = [...storyDownloads, ...episodeDownloadsData];
+
+      // Filter only valid files
+      downloads = combined.where((item) {
         final path = item["local_path"] ?? '';
         return path.isNotEmpty && File(path).existsSync();
       }).toList();
 
-      // Clean invalid
-      final valid = downloads.map((e) => jsonEncode(e)).toList();
-      await prefs.setStringList("downloads", valid);
+      // Save cleaned list (optional)
+      final cleanedStory = storyDownloads
+          .where((e) => File(e["local_path"]).existsSync())
+          .map((e) => jsonEncode(e))
+          .toList();
+
+      final cleanedEpisodes = episodeDownloadsData
+          .where((e) => File(e["local_path"]).existsSync())
+          .map((e) => jsonEncode(e))
+          .toList();
+
+      await prefs.setStringList("downloads", cleanedStory);
+      await prefs.setStringList("episode_downloads", cleanedEpisodes);
     } catch (_) {}
 
     if (mounted) setState(() => isLoading = false);
